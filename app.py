@@ -1,46 +1,55 @@
 import streamlit as st
 
-# Define functions for the calculator operations
-def add(x, y):
-    return x + y
+# Conversion functions
+def celsius_to_fahrenheit(celsius):
+    return (celsius * 9/5) + 32
 
-def subtract(x, y):
-    return x - y
-
-def multiply(x, y):
-    return x * y
-
-def divide(x, y):
-    if y == 0:
-        return "Error! Division by zero."
-    else:
-        return x / y
+def fahrenheit_to_celsius(fahrenheit):
+    return (fahrenheit - 32) * 5/9
 
 # Streamlit app layout
-st.title("Simple Calculator")
+st.title("🌡️ Temperature Converter")
 
-# User inputs for numbers
-num1 = st.number_input("Enter first number", value=0.0, step=1.0)
-num2 = st.number_input("Enter second number", value=0.0, step=1.0)
+# Sidebar for input
+st.sidebar.header("Conversion Settings")
 
-# Dropdown to select the operation
-operation = st.selectbox("Select operation", ("Add", "Subtract", "Multiply", "Divide"))
+# User input for the type of conversion in the sidebar
+conversion_type = st.sidebar.radio(
+    "Choose the conversion type:",
+    ('Celsius to Fahrenheit', 'Fahrenheit to Celsius')
+)
 
-# Perform calculation based on user selection
-if st.button("Calculate"):
-    if operation == "Add":
-        result = add(num1, num2)
-        st.write(f"{num1} + {num2} = {result}")
-    elif operation == "Subtract":
-        result = subtract(num1, num2)
-        st.write(f"{num1} - {num2} = {result}")
-    elif operation == "Multiply":
-        result = multiply(num1, num2)
-        st.write(f"{num1} * {num2} = {result}")
-    elif operation == "Divide":
-        result = divide(num1, num2)
-        st.write(f"{num1} / {num2} = {result}")
+# Use a slider for more interactive temperature input
+if conversion_type == 'Celsius to Fahrenheit':
+    celsius = st.slider("Select temperature in Celsius:", min_value=-100.0, max_value=100.0, value=0.0)
+    fahrenheit = celsius_to_fahrenheit(celsius)
+    
+    # Dynamic output with a colored metric display
+    st.metric(label="Temperature in Fahrenheit", value=f"{fahrenheit:.2f}°F", delta=f"{fahrenheit - 32:.2f}°F")
+    
+    # Adding an image for better user experience
+    st.image("https://upload.wikimedia.org/wikipedia/commons/4/4e/Thermometer_image.png", width=150)
+    
+elif conversion_type == 'Fahrenheit to Celsius':
+    fahrenheit = st.slider("Select temperature in Fahrenheit:", min_value=-200.0, max_value=200.0, value=32.0)
+    celsius = fahrenheit_to_celsius(fahrenheit)
+    
+    # Dynamic output with a colored metric display
+    st.metric(label="Temperature in Celsius", value=f"{celsius:.2f}°C", delta=f"{celsius - 0:.2f}°C")
+    
+    # Adding an image for better user experience
+    st.image("https://upload.wikimedia.org/wikipedia/commons/4/4e/Thermometer_image.png", width=150)
 
-# Display the result
-if st.button("Clear"):
-    st.write("Calculator cleared.")
+# Add an expander for additional information
+with st.expander("ℹ️ About this app"):
+    st.write("""
+        This app allows you to convert temperatures between Celsius and Fahrenheit.
+        - Use the **slider** to select a temperature.
+        - The result will be shown dynamically.
+        - Conversion formulas:
+            - °F = (°C * 9/5) + 32
+            - °C = (°F - 32) * 5/9
+    """)
+
+# Footer
+st.sidebar.markdown("Created with ❤️ using Streamlit")
